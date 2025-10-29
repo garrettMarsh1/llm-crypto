@@ -129,4 +129,6 @@ secrets.yaml
 
 # OS specific
 .DS_Store
-Thumbs.db
+Thumbs.dbparquet_chunks.zip
+parquet_chunks/
+trained_model*/
