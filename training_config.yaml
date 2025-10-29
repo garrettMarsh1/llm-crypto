@@ -1,0 +1,188 @@
+# Crypto Trading Model Fine-tuning Configuration
+
+# Model Configuration (RTX 4070 optimized)
+model:
+  name: "Qwen/Qwen2.5-7B-Instruct"
+  max_length: 2048  # Safe context window for 4-bit quantization
+  temperature: 0.7
+  top_p: 0.9
+  max_new_tokens: 512  # Limit generation length to prevent OOM
+  max_tokens: 512
+
+# LoRA Configuration
+lora:
+  r: 16                    # Rank - higher = more parameters, better performance
+  alpha: 32                # LoRA alpha - typically 2x the rank
+  target_modules:          # Which layers to apply LoRA to
+    - "q_proj"
+    - "v_proj"
+    - "k_proj"
+    - "o_proj"
+    - "gate_proj"
+    - "up_proj"
+    - "down_proj"
+  dropout: 0.05            # Dropout for LoRA layers
+
+# Training Configuration
+training:
+  batch_size: 1            # RTX 4070 optimized - reduced for 12GB VRAM
+  gradient_accumulation_steps: 16  # Increased to maintain effective batch size
+  learning_rate: 2e-4      # Learning rate for LoRA
+  max_steps: 5000          # Maximum training steps (instead of epochs for streaming)
+  warmup_steps: 100        # Warmup steps for learning rate
+  max_grad_norm: 1.0       # Gradient clipping
+  weight_decay: 0.01       # Weight decay for regularization
+  
+  # Advanced training settings
+  lr_scheduler_type: "cosine"  # Learning rate scheduler
+  save_strategy: "steps"       # Save model every N steps
+  eval_strategy: "steps"       # Evaluate every N steps
+  save_steps: 500              # Save every 500 steps
+  eval_steps: 100              # Evaluate every 100 steps
+  logging_steps: 10            # Log every 10 steps
+  
+  # Memory optimization (RTX 4070 optimized)
+  fp16: true               # Use 16-bit precision
+  bf16: false              # Use bfloat16 if available (RTX 4070 doesn't support it well)
+  dataloader_pin_memory: false
+  dataloader_num_workers: 2  # Reduced for 12GB VRAM
+  remove_unused_columns: false
+  gradient_checkpointing: true  # Enable gradient checkpointing
+
+# Data Configuration
+data:
+  max_samples: 100000      # Maximum training samples (start with 100k)
+  test_split: 0.1          # Test split ratio
+  validation_split: 0.1    # Validation split ratio
+  sample_interval: 240     # Sample every 4 hours (240 minutes)
+  streaming: true          # Enable streaming for large datasets
+  
+  # Data augmentation
+  augment_data: true       # Enable data augmentation
+  noise_factor: 0.01       # Add small noise to price data
+  time_shift: true         # Random time shifts for robustness
+
+# Crypto-specific settings
+crypto:
+  symbols:                 # Cryptocurrencies to train on
+    - "BTC-USD"
+    - "ETH-USD"
+    - "SOL-USD"
+    - "DOGE-USD"
+  
+  # Technical indicators to include
+  indicators:
+    - "rsi"
+    - "macd"
+    - "bollinger_bands"
+    - "stochastic"
+    - "williams_r"
+    - "volume_indicators"
+    - "moving_averages"
+    - "atr"
+    - "price_patterns"
+  
+  # Signal generation
+  signal_types:
+    - "BUY"
+    - "SELL"
+    - "HOLD"
+  
+  # Risk management
+  position_sizing: true    # Include position sizing in training
+  stop_loss: true          # Include stop loss levels
+  take_profit: true        # Include take profit levels
+
+# Hardware Configuration
+hardware:
+  device: "auto"           # Device to use (auto, cuda, cpu)
+  mixed_precision: true    # Use mixed precision training
+  gradient_checkpointing: true  # Save memory at cost of speed
+  
+  # Memory optimization (RTX 4070 optimized)
+  max_memory_usage: 0.85   # Maximum GPU memory usage (85% for safety)
+  offload_optimizer: true  # Offload optimizer to CPU to save VRAM
+  offload_params: false    # Keep parameters on GPU for speed
+  use_cache: false         # Disable KV cache during training
+
+# Output Configuration
+output:
+  base_dir: "./trained_models"
+  model_name: "crypto_trading_qwen2.5_7b"
+  save_tokenizer: true
+  save_training_args: true
+  save_metrics: true
+  
+  # Model versioning
+  version: "1.0"
+  description: "Qwen2.5-7B fine-tuned on crypto trading data"
+
+# Monitoring Configuration
+monitoring:
+  wandb:
+    enabled: false         # Enable Weights & Biases logging
+    project: "crypto-trading-llm"
+    entity: "your-username"
+  
+  tensorboard:
+    enabled: true          # Enable TensorBoard logging
+    log_dir: "./logs/tensorboard"
+  
+  # Custom metrics
+  custom_metrics:
+    - "signal_accuracy"
+    - "confidence_calibration"
+    - "risk_adjusted_returns"
+
+# Evaluation Configuration
+evaluation:
+  # Backtesting
+  backtest:
+    enabled: true
+    start_date: "2024-01-01"
+    end_date: "2024-12-31"
+    initial_capital: 10000
+    commission: 0.001      # 0.1% commission
+  
+  # Metrics to track
+  metrics:
+    - "total_return"
+    - "sharpe_ratio"
+    - "max_drawdown"
+    - "win_rate"
+    - "profit_factor"
+    - "signal_accuracy"
+  
+  # Validation strategy
+  validation:
+    method: "time_series_split"  # time_series_split, random_split
+    n_splits: 5
+    test_size: 0.2
+
+# Advanced Configuration
+advanced:
+  # Early stopping
+  early_stopping:
+    enabled: true
+    patience: 3
+    min_delta: 0.001
+    monitor: "eval_loss"
+  
+  # Learning rate scheduling
+  lr_schedule:
+    type: "cosine_with_restarts"
+    num_cycles: 2
+    first_cycle_steps: 1000
+  
+  # Regularization
+  regularization:
+    dropout: 0.1
+    weight_decay: 0.01
+    label_smoothing: 0.1
+  
+  # Data loading
+  data_loading:
+    shuffle: true
+    drop_last: true
+    persistent_workers: true
+    prefetch_factor: 2

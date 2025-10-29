@@ -1,0 +1,283 @@
+# Memory System Configuration for Crypto Trading Agents
+# Optimized for token efficiency and agent lifecycle management
+
+# Memory System Configuration
+memory:
+  # Database settings
+  db_path: "./memory/trading_memories.db"
+  backup_interval: 3600  # seconds
+  max_db_size: "1GB"
+  
+  # Token management (optimized for RTX 4070 12GB)
+  max_tokens_per_agent: 50000       # Maximum tokens per agent before retirement
+  max_context_tokens: 2048          # Maximum tokens in context window (safe for 4-bit)
+  compression_threshold: 500        # Compress memories larger than this
+  
+  # Memory retention
+  memory_retention_days: 30         # Keep memories for this many days
+  importance_threshold: 0.3         # Delete memories below this importance
+  max_memories_per_agent: 1000     # Maximum memories per agent
+  
+  # Vector database (for semantic search)
+  vector_db:
+    enabled: true
+    type: "chromadb"  # or "faiss"
+    collection_name: "trading_memories"
+    embedding_model: "all-MiniLM-L6-v2"
+    similarity_threshold: 0.7
+  
+  # Memory types and their importance weights
+  memory_types:
+    trade:
+      weight: 1.0
+      retention_days: 90
+      compression_threshold: 500
+    
+    analysis:
+      weight: 0.8
+      retention_days: 60
+      compression_threshold: 1000
+    
+    market_event:
+      weight: 0.9
+      retention_days: 120
+      compression_threshold: 800
+    
+    strategy:
+      weight: 0.95
+      retention_days: 180
+      compression_threshold: 600
+    
+    lesson:
+      weight: 0.85
+      retention_days: 150
+      compression_threshold: 700
+    
+    performance:
+      weight: 0.9
+      retention_days: 90
+      compression_threshold: 400
+
+# Agent Lifecycle Configuration
+agent_lifecycle:
+  # Agent types and their configurations
+  agent_types:
+    default:
+      max_tokens: 50000
+      max_context_tokens: 2048
+      max_memory_items: 800
+      max_lifetime_hours: 24
+      performance_threshold: 0.6
+      memory_retention_days: 30
+    
+    conservative:
+      max_tokens: 30000
+      max_context_tokens: 1536
+      max_memory_items: 400
+      max_lifetime_hours: 12
+      performance_threshold: 0.7
+      memory_retention_days: 45
+    
+    aggressive:
+      max_tokens: 80000
+      max_context_tokens: 2560
+      max_memory_items: 1200
+      max_lifetime_hours: 36
+      performance_threshold: 0.5
+      memory_retention_days: 20
+    
+    research:
+      max_tokens: 100000
+      max_context_tokens: 3072
+      max_memory_items: 1500
+      max_lifetime_hours: 48
+      performance_threshold: 0.4
+      memory_retention_days: 60
+  
+  # Retirement criteria
+  retirement:
+    # Automatic retirement triggers
+    max_tokens_exceeded: true
+    max_memory_items_exceeded: true
+    max_lifetime_exceeded: true
+    performance_below_threshold: true
+    
+    # Performance thresholds
+    min_win_rate: 0.4
+    min_trades_for_evaluation: 10
+    max_consecutive_losses: 5
+    
+    # Memory transfer settings
+    transfer_important_memories: true
+    transfer_threshold: 0.6
+    max_transferred_memories: 100
+  
+  # Successor agent creation
+  successor:
+    inherit_performance_insights: true
+    inherit_strategies: true
+    inherit_lessons_learned: true
+    reduce_memory_importance: 0.8  # Multiply importance by this factor
+
+# Context Management
+context:
+  # Context building strategy
+  strategy: "hybrid"  # "recent", "relevant", "hybrid", "importance"
+  
+  # Recent memories
+  recent_memories:
+    count: 10
+    time_window_hours: 24
+  
+  # Relevant memories (semantic search)
+  relevant_memories:
+    count: 20
+    similarity_threshold: 0.7
+    max_age_days: 30
+  
+  # Important memories
+  important_memories:
+    count: 15
+    importance_threshold: 0.7
+  
+  # Performance context
+  performance_context:
+    include_metrics: true
+    include_insights: true
+    max_insights: 5
+  
+  # Context prioritization
+  priority_order:
+    - "recent_memories"
+    - "relevant_memories"
+    - "important_memories"
+    - "performance_context"
+
+# Token Optimization
+token_optimization:
+  # Compression settings
+  compression:
+    enabled: true
+    algorithm: "zlib"  # "zlib", "gzip", "lz4"
+    min_size: 1000    # Only compress if larger than this
+  
+  # Content summarization
+  summarization:
+    enabled: true
+    max_length: 200
+    preserve_key_info: true
+  
+  # Memory pruning
+  pruning:
+    enabled: true
+    frequency_hours: 6
+    remove_duplicates: true
+    remove_low_importance: true
+  
+  # Context window management (RTX 4070 optimized)
+  context_window:
+    max_tokens: 2048
+    reserve_tokens: 128  # Reserve for new content
+    overflow_strategy: "truncate_oldest"  # "truncate_oldest", "summarize", "compress"
+
+# Performance Monitoring
+monitoring:
+  # Metrics to track
+  metrics:
+    - "memory_usage"
+    - "token_efficiency"
+    - "agent_performance"
+    - "context_quality"
+    - "retrieval_speed"
+  
+  # Logging
+  logging:
+    level: "INFO"
+    log_memory_operations: true
+    log_agent_lifecycle: true
+    log_performance: true
+  
+  # Alerts
+  alerts:
+    high_memory_usage: 0.8
+    low_performance: 0.3
+    token_limit_approaching: 0.9
+  
+  # Reporting
+  reporting:
+    enabled: true
+    frequency_hours: 24
+    output_format: "json"  # "json", "csv", "html"
+
+# Integration Settings
+integration:
+  # Trading system integration
+  trading_system:
+    update_frequency_seconds: 60
+    sync_performance: true
+    sync_trades: true
+  
+  # Model integration
+  model:
+    context_injection: true
+    memory_aware: true
+    adaptive_context: true
+  
+  # External systems
+  external:
+    enable_api: true
+    api_port: 8000
+    enable_webhook: false
+
+# Security and Privacy
+security:
+  # Data encryption
+  encryption:
+    enabled: false
+    algorithm: "AES-256"
+    key_rotation_days: 30
+  
+  # Access control
+  access_control:
+    enabled: false
+    require_authentication: false
+  
+  # Data anonymization
+  anonymization:
+    enabled: false
+    remove_personal_data: true
+    hash_sensitive_data: false
+
+# Backup and Recovery
+backup:
+  # Backup settings
+  enabled: true
+  frequency_hours: 24
+  retention_days: 30
+  compression: true
+  
+  # Recovery
+  recovery:
+    enabled: true
+    auto_recovery: false
+    backup_verification: true
+
+# Development and Testing
+development:
+  # Debug settings
+  debug:
+    enabled: false
+    verbose_logging: false
+    memory_tracing: false
+  
+  # Testing
+  testing:
+    mock_vector_db: false
+    mock_embeddings: false
+    test_data_size: 1000
+  
+  # Profiling
+  profiling:
+    enabled: false
+    profile_memory_usage: false
+    profile_token_usage: false

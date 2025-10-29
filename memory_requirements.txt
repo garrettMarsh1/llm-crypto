@@ -1,0 +1,52 @@
+# Memory System Requirements for Crypto Trading Agents
+# Advanced memory management and agent lifecycle
+
+# Core dependencies
+numpy>=1.21.0
+pandas>=1.3.0
+sqlite3  # Built-in with Python
+pathlib  # Built-in with Python
+hashlib  # Built-in with Python
+zlib     # Built-in with Python
+threading  # Built-in with Python
+time     # Built-in with Python
+datetime # Built-in with Python
+json     # Built-in with Python
+yaml>=6.0
+loguru>=0.6.0
+
+# Vector database for semantic search
+chromadb>=0.4.0
+# Alternative: faiss-cpu>=1.7.0  # Uncomment if you prefer FAISS
+
+# Text processing and embeddings
+sentence-transformers>=2.2.0
+transformers>=4.21.0
+torch>=1.12.0
+
+# Data processing
+scikit-learn>=1.0.0
+scipy>=1.8.0
+
+# Optional: Advanced vector databases
+# pinecone-client>=2.2.0  # For Pinecone integration
+# weaviate-client>=3.15.0  # For Weaviate integration
+
+# Optional: Additional ML libraries
+# openai>=0.27.0  # For OpenAI embeddings
+# cohere>=4.0.0   # For Cohere embeddings
+
+# Development and testing
+pytest>=7.0.0
+pytest-asyncio>=0.21.0
+black>=22.0.0
+flake8>=5.0.0
+
+# Monitoring and logging
+psutil>=5.9.0  # For system monitoring
+memory-profiler>=0.60.0  # For memory profiling
+
+# Optional: Web interface
+# streamlit>=1.20.0  # For web interface
+# fastapi>=0.85.0    # For API interface
+# uvicorn>=0.18.0    # For API server

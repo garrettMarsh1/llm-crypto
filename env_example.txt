@@ -1,0 +1,12 @@
+# Alpaca API Credentials
+ALPACA_API_KEY=your_paper_api_key_here
+ALPACA_API_SECRET=your_paper_api_secret_here
+
+# Hugging Face Token (for model downloads)
+HUGGINGFACE_TOKEN=your_hf_token_here
+
+# Optional: Weights & Biases for experiment tracking
+WANDB_API_KEY=your_wandb_key_here
+
+# Optional: OpenAI API for additional data sources
+OPENAI_API_KEY=your_openai_key_here

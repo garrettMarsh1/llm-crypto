@@ -1,0 +1,17 @@
+# Parquet Pipeline Requirements
+# Core data processing
+pyarrow>=12.0.0
+pandas>=1.5.0
+numpy>=1.21.0
+
+# ML/AI libraries
+transformers>=4.30.0
+torch>=2.0.0
+peft>=0.4.0
+datasets>=2.12.0
+bitsandbytes>=0.39.0
+accelerate>=0.20.0
+
+# Utilities
+loguru>=0.7.0
+psutil>=5.9.0

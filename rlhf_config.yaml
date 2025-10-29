@@ -1,0 +1,223 @@
+# RLHF Configuration for Crypto Trading Model
+# Based on OpenAI's process supervision techniques
+
+# Model Configuration (RTX 4070 optimized)
+model:
+  name: "Qwen/Qwen2.5-7B-Instruct"
+  max_length: 2048  # Safe context window for 4-bit quantization
+  temperature: 0.7
+  top_p: 0.9
+  max_new_tokens: 256  # Limit generation length for RLHF
+
+# RLHF Training Configuration (RTX 4070 optimized)
+rlhf:
+  # Learning rates
+  learning_rate: 1e-5          # Main model learning rate
+  reward_learning_rate: 1e-4   # Reward model learning rate
+  
+  # Training parameters (RTX 4070 optimized)
+  batch_size: 1                # Reduced for 12GB VRAM
+  gradient_accumulation_steps: 4  # Maintain effective batch size
+  reward_epochs: 10            # Epochs for reward model training
+  rl_epochs: 5                 # Epochs for RL training
+  
+  # Model paths
+  lora_path: "./trained_models/trained_model"  # Path to LoRA weights
+  output_dir: "./trained_models/rlhf_trading_model"
+  
+  # Reward model configuration
+  reward_model:
+    hidden_size: 4096          # Qwen2.5-7B hidden size
+    dropout: 0.1
+    layers: 3                  # Number of layers in reward head
+
+# Process Supervision Configuration
+process_supervision:
+  # Step types to supervise
+  steps:
+    - "technical_analysis"
+    - "risk_assessment" 
+    - "market_context"
+    - "signal_generation"
+  
+  # Reward weights for each step type
+  step_weights:
+    technical_analysis: 0.3
+    risk_assessment: 0.25
+    market_context: 0.2
+    signal_generation: 0.25
+  
+  # Quality criteria for each step
+  quality_criteria:
+    technical_analysis:
+      - "mentions_relevant_indicators"
+      - "provides_trend_analysis"
+      - "identifies_support_resistance"
+      - "analyzes_volume_patterns"
+    
+    risk_assessment:
+      - "evaluates_volatility"
+      - "suggests_position_sizing"
+      - "sets_stop_loss_levels"
+      - "considers_market_timing"
+    
+    market_context:
+      - "analyzes_sentiment"
+      - "considers_macro_factors"
+      - "evaluates_news_impact"
+      - "assesses_market_conditions"
+    
+    signal_generation:
+      - "synthesizes_analysis"
+      - "provides_clear_signal"
+      - "justifies_confidence"
+      - "includes_risk_management"
+
+# Reward Calculation
+rewards:
+  # Base rewards
+  correct_step: 0.5
+  incorrect_step: -0.2
+  high_confidence_correct: 0.3
+  low_confidence_incorrect: 0.1
+  
+  # Outcome-based rewards
+  profitable_trade: 0.5
+  losing_trade: -0.3
+  avoided_loss: 0.2
+  
+  # Step-specific rewards
+  technical_analysis:
+    mentions_rsi: 0.1
+    mentions_macd: 0.1
+    mentions_bollinger: 0.1
+    mentions_support_resistance: 0.1
+  
+  risk_assessment:
+    mentions_volatility: 0.1
+    suggests_stop_loss: 0.1
+    considers_position_size: 0.1
+    evaluates_timing: 0.1
+  
+  market_context:
+    analyzes_sentiment: 0.1
+    considers_news: 0.1
+    evaluates_trends: 0.1
+    assesses_conditions: 0.1
+  
+  signal_generation:
+    clear_signal: 0.2
+    justified_confidence: 0.1
+    includes_reasoning: 0.1
+    mentions_risk: 0.1
+
+# Training Data Configuration
+data:
+  # Use existing training data
+  training_data_path: "./training_data/combined_training_data.json"
+  
+  # Generate additional RLHF data
+  generate_rlhf_data: true
+  rlhf_samples: 5000
+  
+  # Data augmentation
+  augment_data: true
+  noise_factor: 0.01
+  time_shift: true
+
+# Evaluation Configuration
+evaluation:
+  # Metrics to track
+  metrics:
+    - "step_accuracy"
+    - "confidence_calibration"
+    - "reward_correlation"
+    - "trading_performance"
+  
+  # Evaluation frequency
+  eval_frequency: 100  # Every 100 steps
+  
+  # Test data
+  test_data_path: "./training_data/test_data.json"
+  test_samples: 1000
+
+# Advanced RLHF Configuration
+advanced:
+  # PPO parameters (if using PPO)
+  ppo:
+    clip_ratio: 0.2
+    value_loss_coef: 0.5
+    entropy_coef: 0.01
+    max_grad_norm: 0.5
+  
+  # KL divergence penalty
+  kl_penalty: 0.1
+  kl_target: 0.01
+  
+  # Reward normalization
+  reward_normalization: true
+  reward_clipping: 1.0
+  
+  # Experience replay
+  experience_replay:
+    enabled: true
+    buffer_size: 10000
+    sample_size: 256
+  
+  # Curriculum learning
+  curriculum:
+    enabled: true
+    difficulty_levels: 5
+    start_level: 1
+    progression_rate: 0.1
+
+# Monitoring Configuration
+monitoring:
+  # Logging
+  log_frequency: 10
+  log_dir: "./logs/rlhf"
+  
+  # TensorBoard
+  tensorboard:
+    enabled: true
+    log_dir: "./logs/tensorboard/rlhf"
+  
+  # Weights & Biases
+  wandb:
+    enabled: false
+    project: "crypto-trading-rlhf"
+    entity: "your-username"
+  
+  # Custom metrics
+  custom_metrics:
+    - "step_reward_distribution"
+    - "confidence_vs_accuracy"
+    - "signal_quality_score"
+    - "reasoning_coherence"
+
+# Hardware Configuration
+hardware:
+  device: "auto"
+  mixed_precision: true
+  gradient_checkpointing: true
+  
+  # Memory optimization
+  max_memory_usage: 0.9
+  offload_optimizer: false
+  offload_params: false
+
+# Output Configuration
+output:
+  # Model saving
+  save_frequency: 500
+  save_total_limit: 3
+  
+  # Checkpointing
+  checkpoint_frequency: 1000
+  checkpoint_dir: "./checkpoints/rlhf"
+  
+  # Final model
+  final_model_dir: "./trained_models/rlhf_final"
+  
+  # Evaluation results
+  eval_results_dir: "./results/rlhf_evaluation"

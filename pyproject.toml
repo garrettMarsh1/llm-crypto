@@ -1,0 +1,73 @@
+[build-system]
+requires = ["setuptools>=45", "wheel", "setuptools_scm[toml]>=6.2"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "crypto-trading-llm"
+version = "1.0.0"
+description = "Memory-efficient LLM fine-tuning for cryptocurrency trading analysis"
+readme = "README.md"
+requires-python = ">=3.8"
+license = {text = "MIT"}
+authors = [
+    {name = "Your Name", email = "your.email@example.com"},
+]
+keywords = ["cryptocurrency", "trading", "llm", "fine-tuning", "parquet", "memory-efficient"]
+classifiers = [
+    "Development Status :: 4 - Beta",
+    "Intended Audience :: Developers",
+    "Intended Audience :: Financial and Insurance Industry",
+    "License :: OSI Approved :: MIT License",
+    "Operating System :: OS Independent",
+    "Programming Language :: Python :: 3",
+    "Programming Language :: Python :: 3.8",
+    "Programming Language :: Python :: 3.9",
+    "Programming Language :: Python :: 3.10",
+    "Programming Language :: Python :: 3.11",
+    "Topic :: Scientific/Engineering :: Artificial Intelligence",
+    "Topic :: Office/Business :: Financial :: Investment",
+]
+
+dependencies = [
+    "pyarrow>=12.0.0",
+    "pandas>=1.5.0",
+    "numpy>=1.21.0",
+    "transformers>=4.30.0",
+    "torch>=2.0.0",
+    "peft>=0.4.0",
+    "datasets>=2.12.0",
+    "bitsandbytes>=0.39.0",
+    "accelerate>=0.20.0",
+    "loguru>=0.7.0",
+    "psutil>=5.9.0",
+    "ijson>=3.4.0",
+]
+
+[project.optional-dependencies]
+dev = [
+    "pytest>=6.0",
+    "black>=21.0",
+    "flake8>=3.8",
+    "mypy>=0.800",
+]
+colab = [
+    "google-colab>=1.0.0",
+]
+
+[project.scripts]
+crypto-train = "scripts.parquet_chunk_trainer:main"
+crypto-convert = "scripts.fast_parquet_processor:main"
+crypto-pipeline = "run_parquet_pipeline:main"
+
+[project.urls]
+Homepage = "https://github.com/yourusername/crypto-trading-llm"
+Repository = "https://github.com/yourusername/crypto-trading-llm"
+Issues = "https://github.com/yourusername/crypto-trading-llm/issues"
+Documentation = "https://github.com/yourusername/crypto-trading-llm#readme"
+
+[tool.setuptools.packages.find]
+where = ["."]
+include = ["scripts*", "run_*"]
+
+[tool.setuptools.package-data]
+"*" = ["*.yaml", "*.yml", "*.json", "*.txt"]
